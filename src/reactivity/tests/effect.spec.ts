@@ -59,8 +59,8 @@ describe('effect', () => {
         // obj.prop++;
         // expect(dummy).toBe(3);
         stop(runner);
-        obj.prop = 3
-        // obj.prop++;
+        // obj.prop = 3
+        obj.prop++;
         expect(dummy).toBe(2);
     
         // stopped effect should still be manually callable

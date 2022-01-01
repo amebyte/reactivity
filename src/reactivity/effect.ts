@@ -1,6 +1,7 @@
 import { extend } from "../shared"
 
 let activeEffect
+let shouldTrack
 class ReactiveEffect {
     private _fn: any
     deps = []
@@ -10,8 +11,15 @@ class ReactiveEffect {
         this._fn = fn
     }
     run() {
+        if(!this.active) {
+            return this._fn()
+        }
+
         activeEffect = this
-        return this._fn()
+        shouldTrack = true
+        const result = this._fn()
+        shouldTrack = false
+        return result
     }
     stop() {
         if(this.active) {
@@ -45,7 +53,7 @@ export function stop(runner) {
 
 const targetMap = new Map()
 export function track(target, key) {
-    let depsMap = targetMap.get(targetMap)
+    let depsMap = targetMap.get(target)
     if(!depsMap) {
         depsMap = new Map()
         targetMap.set(target, depsMap)
@@ -57,6 +65,7 @@ export function track(target, key) {
     }
     
     if(!activeEffect) return
+    if(!shouldTrack) return
 
     dep.add(activeEffect)
     activeEffect.deps.push(dep)
