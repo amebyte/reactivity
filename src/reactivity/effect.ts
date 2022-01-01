@@ -1,8 +1,11 @@
+import { extend } from "../shared"
+
 let activeEffect
 class ReactiveEffect {
     private _fn: any
     deps = []
     active = true
+    onStop?: () => void
     constructor(fn, public scheduler?) {
         this._fn = fn
     }
@@ -13,6 +16,9 @@ class ReactiveEffect {
     stop() {
         if(this.active) {
             cleanupEffect(this)
+            if(this.onStop) {
+                this.onStop()
+            }
             this.active = false
         }
     }
@@ -26,6 +32,7 @@ function cleanupEffect(effect) {
 
 export function effect(fn, options: any = {}) {
     const _effect  = new ReactiveEffect(fn, options.scheduler)
+    extend(_effect, options)
     _effect.run()
     const runner: any = _effect.run.bind(_effect)
     runner.effect = _effect
@@ -49,6 +56,8 @@ export function track(target, key) {
         depsMap.set(key, dep)
     }
     
+    if(!activeEffect) return
+
     dep.add(activeEffect)
     activeEffect.deps.push(dep)
 }
