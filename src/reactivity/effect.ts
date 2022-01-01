@@ -36,6 +36,7 @@ function cleanupEffect(effect) {
     effect.deps.forEach((dep: any) => {
         dep.delete(effect)
     })
+    effect.deps.length = 0
 }
 
 export function effect(fn, options: any = {}) {
@@ -53,6 +54,7 @@ export function stop(runner) {
 
 const targetMap = new Map()
 export function track(target, key) {
+    if(!isTacking()) return
     let depsMap = targetMap.get(target)
     if(!depsMap) {
         depsMap = new Map()
@@ -63,12 +65,14 @@ export function track(target, key) {
         dep = new Set()
         depsMap.set(key, dep)
     }
-    
-    if(!activeEffect) return
-    if(!shouldTrack) return
 
+    if(dep.has(activeEffect)) return
     dep.add(activeEffect)
     activeEffect.deps.push(dep)
+}
+
+export function isTacking() {
+    return activeEffect && shouldTrack
 }
 
 export function trigger(target, key) {
