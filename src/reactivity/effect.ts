@@ -66,6 +66,10 @@ export function track(target, key) {
         depsMap.set(key, dep)
     }
 
+    trackEffects(dep)
+}
+
+export function trackEffects(dep) {
     if(dep.has(activeEffect)) return
     dep.add(activeEffect)
     activeEffect.deps.push(dep)
@@ -78,6 +82,10 @@ export function isTacking() {
 export function trigger(target, key) {
     let depsMap = targetMap.get(target)
     const deps = depsMap.get(key)
+    triggerEffects(deps)
+}
+
+export function triggerEffects(deps) {
     deps.forEach(effect => {
         if(effect.scheduler){
             effect.scheduler()
