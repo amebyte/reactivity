@@ -14,7 +14,7 @@ describe("computed", () => {
     expect(age.value).toBe(1);
   });
 
-  it.skip("should compute lazily", () => {
+  it("should compute lazily", () => {
     const value = reactive({
       foo: 1,
     });
@@ -43,10 +43,10 @@ describe("computed", () => {
 
     // should not compute again
     cValue.value;
-    // expect(getter).toHaveBeenCalledTimes(2);
+    expect(getter).toHaveBeenCalledTimes(2);
   });
 
-  it("hao compute run", () => {
+  it.skip("hao compute run", () => {
     const value = reactive({
       foo: 1,
     });
