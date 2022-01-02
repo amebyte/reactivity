@@ -46,7 +46,7 @@ describe("computed", () => {
     expect(getter).toHaveBeenCalledTimes(2);
   });
 
-  it.skip("hao compute run", () => {
+  it("hao compute run", () => {
     const value = reactive({
       foo: 1,
     });
